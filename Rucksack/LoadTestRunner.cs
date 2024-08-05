@@ -42,7 +42,7 @@ public static class LoadTestRunner
                 break;
             }
 
-            Thread.Sleep(result.NextStepDelay.Value);
+            await Task.Delay(result.NextStepDelay.Value);
         }
 
         logger.LogInformation("Waiting for {Count} tasks to complete...", allTasks.Count);
