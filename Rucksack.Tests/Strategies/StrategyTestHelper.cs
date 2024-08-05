@@ -1,11 +1,23 @@
 namespace Rucksack.Tests.Strategies;
 
-public static class StrategyHelper
+public static class StrategyTestHelper
 {
-    public static async Task ExecuteStrategyResultAndWait(LoadStrategyResult result)
-        => await Task.WhenAll(await ExecuteStrategyResult(result));
+    public static async ValueTask ExecuteStrategyResultAndWait(LoadStrategyResult result)
+    {
+        var tasks = await ExecuteStrategyResult(result);
 
-    public static async Task<List<Task>> ExecuteStrategyResult(LoadStrategyResult result)
+        await WhenAll(tasks);
+    }
+
+    public static async ValueTask WhenAll(IEnumerable<ValueTask<LoadTaskResult>> tasks)
+    {
+        foreach (var task in tasks)
+        {
+            await task;
+        }
+    }
+
+    public static async ValueTask<List<ValueTask<LoadTaskResult>>> ExecuteStrategyResult(LoadStrategyResult result)
     {
         if (result.NextStepDelay.HasValue)
         {

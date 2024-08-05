@@ -2,5 +2,5 @@ namespace Rucksack;
 
 public interface ILoadStrategy
 {
-    LoadStrategyResult Step(Func<Task> action, LoadStrategyResult? previousResult);
+    LoadStrategyResult Step(Func<ValueTask<LoadTaskResult>> action, LoadStrategyResult? previousResult);
 }

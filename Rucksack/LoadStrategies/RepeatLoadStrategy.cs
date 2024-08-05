@@ -5,7 +5,7 @@ namespace Rucksack.LoadStrategies;
 public class RepeatLoadStrategy(int CountPerStep, TimeSpan Interval, TimeSpan TotalDuration)
     : ILoadStrategy
 {
-    public LoadStrategyResult Step(Func<Task> action, LoadStrategyResult? previousResult)
+    public LoadStrategyResult Step(Func<ValueTask<LoadTaskResult>> action, LoadStrategyResult? previousResult)
     {
         RepeatLoadStrategyResult result;
         int iteration = 1;
@@ -29,7 +29,9 @@ public class RepeatLoadStrategy(int CountPerStep, TimeSpan Interval, TimeSpan To
             return LoadStrategyResult.Finished;
         }
 
-        var tasks = Enumerable.Range(0, CountPerStep).Select(_ => action()).ToArray();
+        var tasks = Enumerable.Range(0, CountPerStep)
+            .Select(_ => action())
+            .ToArray();
 
         return result with
         {
@@ -38,6 +40,6 @@ public class RepeatLoadStrategy(int CountPerStep, TimeSpan Interval, TimeSpan To
         };
     }
 
-    private record RepeatLoadStrategyResult(TimeSpan? NextStepDelay, Stopwatch Stopwatch, int Iteration, IReadOnlyList<Task>? Tasks)
+    private record RepeatLoadStrategyResult(TimeSpan? NextStepDelay, Stopwatch Stopwatch, int Iteration, IReadOnlyList<ValueTask<LoadTaskResult>>? Tasks)
         : LoadStrategyResult(NextStepDelay, Tasks);
 }

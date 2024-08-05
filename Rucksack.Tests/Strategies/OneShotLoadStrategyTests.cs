@@ -16,10 +16,10 @@ public class OneShotLoadStrategyTests
         var result = strategy.Step(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return Task.CompletedTask;
+            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         }, null);
 
-        await StrategyHelper.ExecuteStrategyResultAndWait(result);
+        await StrategyTestHelper.ExecuteStrategyResultAndWait(result);
 
         // Assert
         actionCalledCount.Should().Be(1);
@@ -37,10 +37,10 @@ public class OneShotLoadStrategyTests
         var result = strategy.Step(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return Task.CompletedTask;
+            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         }, null);
 
-        await StrategyHelper.ExecuteStrategyResultAndWait(result);
+        await StrategyTestHelper.ExecuteStrategyResultAndWait(result);
 
         // Assert
         actionCalledCount.Should().Be(3);

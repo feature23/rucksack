@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Rucksack.LoadStrategies;
 
 namespace Rucksack.Tests.Strategies;
@@ -15,13 +14,13 @@ public class RepeatLoadStrategyTests
         var action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return Task.CompletedTask;
+            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
 
         // Act
         var result = strategy.Step(action, null);
 
-        var tasks = await StrategyHelper.ExecuteStrategyResult(result);
+        var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
@@ -29,8 +28,8 @@ public class RepeatLoadStrategyTests
         // Call again
         result = strategy.Step(action, result);
 
-        tasks.AddRange(await StrategyHelper.ExecuteStrategyResult(result));
-        await Task.WhenAll(tasks);
+        tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
+        await StrategyTestHelper.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(1);
@@ -46,13 +45,13 @@ public class RepeatLoadStrategyTests
         var action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return Task.CompletedTask;
+            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
 
         // Act
         var result = strategy.Step(action, null);
 
-        var tasks = await StrategyHelper.ExecuteStrategyResult(result);
+        var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
@@ -60,8 +59,8 @@ public class RepeatLoadStrategyTests
         // Call again
         result = strategy.Step(action, result);
 
-        tasks.AddRange(await StrategyHelper.ExecuteStrategyResult(result));
-        await Task.WhenAll(tasks);
+        tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
+        await StrategyTestHelper.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(3);

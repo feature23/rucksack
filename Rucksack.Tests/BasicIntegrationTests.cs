@@ -17,7 +17,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         await LoadTestRunner.Run(() =>
         {
             Interlocked.Increment(ref executionCount);
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }, new LoadTestOptions
         {
             LoadStrategy = new OneShotLoadStrategy(count),
@@ -44,7 +44,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         await LoadTestRunner.Run(() =>
         {
             Interlocked.Increment(ref executionCount);
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }, new LoadTestOptions
         {
             LoadStrategy = new RepeatLoadStrategy(count, interval, duration),
