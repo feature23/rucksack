@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rucksack", "Rucksack\Rucksack.csproj", "{8D7C9ECC-2450-4877-8747-29C38E7CDFA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rucksack.Tests", "Rucksack.Tests\Rucksack.Tests.csproj", "{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D7C9ECC-2450-4877-8747-29C38E7CDFA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D7C9ECC-2450-4877-8747-29C38E7CDFA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D7C9ECC-2450-4877-8747-29C38E7CDFA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D7C9ECC-2450-4877-8747-29C38E7CDFA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
