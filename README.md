@@ -13,9 +13,9 @@ using Rucksack.LoadStrategies;
 var options = new LoadTestOptions
 {
     LoadStrategy = new RepeatLoadStrategy(
-        CountPerStep: 10,
-        Interval: TimeSpan.FromSeconds(1),
-        TotalDuration: TimeSpan.FromSeconds(10)),
+        countPerInterval: 10,
+        interval: TimeSpan.FromSeconds(1),
+        totalDuration: TimeSpan.FromSeconds(10)),
 };
 
 await LoadTestRunner.Run(async () =>
@@ -31,3 +31,4 @@ There are a couple built-in strategies for generating load, or you can implement
 
 * `OneShotLoadStrategy`: Enqueue the given number of tasks all at once. Does not repeat.
 * `RepeatLoadStrategy`: Repeat enqueueing the given count of tasks at each given interval until the given duration has passed.
+* `SteppedBurstLoadStrategy`: Enqueue an increasing (or decreasing) burst of tasks in a stepwise manner, regardless of how many are still running.
