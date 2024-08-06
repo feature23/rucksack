@@ -8,6 +8,8 @@ public class SteppedBurstLoadStrategyTests
     [InlineData(1, 1, 2, 3)] // generated load = [1, 2] for a total of 3
     [InlineData(2, 2, 4, 6)] // generated load = [2, 4] for a total of 6
     [InlineData(10, 10, 50, 150)] // generated load = [10, 20, 30, 40, 50] for a total of 150
+    [InlineData(-10, 50, 10, 150)] // generated load = [50, 40, 30, 20, 10] for a total of 150
+    [InlineData(-1, 2, 1, 3)] // generated load = [2, 1] for a total of 3
     [Theory]
     public async Task SteppedBurstLoadStrategy_FullTests(int step, int from, int to, int expectedCount)
     {
