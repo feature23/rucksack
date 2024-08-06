@@ -16,24 +16,25 @@ public class RepeatLoadStrategyTests
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(action, null);
+        var result = strategy.GenerateLoad(action, context);
 
         var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
-        result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
+        result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.Step(action, result);
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await StrategyTestHelper.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(1);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 
     [Fact]
@@ -47,23 +48,24 @@ public class RepeatLoadStrategyTests
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(action, null);
+        var result = strategy.GenerateLoad(action, context);
 
         var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
-        result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
+        result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.Step(action, result);
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await StrategyTestHelper.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(3);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 }

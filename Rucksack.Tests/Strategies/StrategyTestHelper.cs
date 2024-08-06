@@ -19,9 +19,9 @@ public static class StrategyTestHelper
 
     public static async ValueTask<List<ValueTask<LoadTaskResult>>> ExecuteStrategyResult(LoadStrategyResult result)
     {
-        if (result.NextStepDelay.HasValue)
+        if (result.RepeatDelay.HasValue)
         {
-            await Task.Delay(result.NextStepDelay.Value);
+            await Task.Delay(result.RepeatDelay.Value);
         }
 
         return [..result.Tasks ?? []];

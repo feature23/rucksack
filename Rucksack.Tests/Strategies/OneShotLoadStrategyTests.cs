@@ -11,19 +11,20 @@ public class OneShotLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new OneShotLoadStrategy(1);
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(() =>
+        var result = strategy.GenerateLoad(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
-        }, null);
+        }, context);
 
         await StrategyTestHelper.ExecuteStrategyResultAndWait(result);
 
         // Assert
         actionCalledCount.Should().Be(1);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 
     [Fact]
@@ -32,18 +33,19 @@ public class OneShotLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new OneShotLoadStrategy(3);
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(() =>
+        var result = strategy.GenerateLoad(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
-        }, null);
+        }, context);
 
         await StrategyTestHelper.ExecuteStrategyResultAndWait(result);
 
         // Assert
         actionCalledCount.Should().Be(3);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 }
