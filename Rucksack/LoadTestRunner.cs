@@ -30,7 +30,7 @@ public static class LoadTestRunner
         {
             var context = new LoadStrategyContext(PreviousResult: result);
 
-            result = options.LoadStrategy.Step(LoadAction, context);
+            result = options.LoadStrategy.GenerateLoad(LoadAction, context);
 
             if (result.Tasks is { } tasks)
             {
@@ -39,12 +39,12 @@ public static class LoadTestRunner
                 allTasks.AddRange(tasks);
             }
 
-            if (result.NextStepDelay == null)
+            if (result.RepeatDelay == null)
             {
                 break;
             }
 
-            await Task.Delay(result.NextStepDelay.Value);
+            await Task.Delay(result.RepeatDelay.Value);
         }
 
         logger.LogInformation("Waiting for {Count} tasks to complete...", allTasks.Count);

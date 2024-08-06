@@ -14,7 +14,7 @@ public class OneShotLoadStrategyTests
         var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(() =>
+        var result = strategy.GenerateLoad(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
@@ -24,7 +24,7 @@ public class OneShotLoadStrategyTests
 
         // Assert
         actionCalledCount.Should().Be(1);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class OneShotLoadStrategyTests
         var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(() =>
+        var result = strategy.GenerateLoad(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
@@ -46,6 +46,6 @@ public class OneShotLoadStrategyTests
 
         // Assert
         actionCalledCount.Should().Be(3);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 }

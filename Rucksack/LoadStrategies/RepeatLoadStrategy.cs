@@ -2,17 +2,17 @@ using System.Diagnostics;
 
 namespace Rucksack.LoadStrategies;
 
-public class RepeatLoadStrategy(int CountPerStep, TimeSpan Interval, TimeSpan TotalDuration)
+public class RepeatLoadStrategy(int countPerInterval, TimeSpan interval, TimeSpan totalDuration)
     : ILoadStrategy
 {
-    public LoadStrategyResult Step(Func<ValueTask<LoadTaskResult>> action, LoadStrategyContext context)
+    public LoadStrategyResult GenerateLoad(Func<ValueTask<LoadTaskResult>> action, LoadStrategyContext context)
     {
         RepeatLoadStrategyResult result;
         int iteration = 1;
 
         if (context.PreviousResult is null)
         {
-            result = new RepeatLoadStrategyResult(Interval, Stopwatch.StartNew(), iteration, null);
+            result = new RepeatLoadStrategyResult(interval, Stopwatch.StartNew(), iteration, null);
         }
         else if (context.PreviousResult is not RepeatLoadStrategyResult previousRepeatResult)
         {
@@ -24,12 +24,12 @@ public class RepeatLoadStrategy(int CountPerStep, TimeSpan Interval, TimeSpan To
             iteration = result.Iteration + 1;
         }
 
-        if (result.Stopwatch.Elapsed >= TotalDuration)
+        if (result.Stopwatch.Elapsed >= totalDuration)
         {
             return LoadStrategyResult.Finished;
         }
 
-        var tasks = Enumerable.Range(0, CountPerStep)
+        var tasks = Enumerable.Range(0, countPerInterval)
             .Select(_ => action())
             .ToArray();
 
@@ -40,6 +40,6 @@ public class RepeatLoadStrategy(int CountPerStep, TimeSpan Interval, TimeSpan To
         };
     }
 
-    private record RepeatLoadStrategyResult(TimeSpan? NextStepDelay, Stopwatch Stopwatch, int Iteration, IReadOnlyList<ValueTask<LoadTaskResult>>? Tasks)
-        : LoadStrategyResult(NextStepDelay, Tasks);
+    private record RepeatLoadStrategyResult(TimeSpan? RepeatDelay, Stopwatch Stopwatch, int Iteration, IReadOnlyList<ValueTask<LoadTaskResult>>? Tasks)
+        : LoadStrategyResult(RepeatDelay, Tasks);
 }

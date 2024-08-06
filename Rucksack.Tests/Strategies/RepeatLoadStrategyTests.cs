@@ -19,22 +19,22 @@ public class RepeatLoadStrategyTests
         var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(action, context);
+        var result = strategy.GenerateLoad(action, context);
 
         var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
-        result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
+        result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.Step(action, new LoadStrategyContext(PreviousResult: result));
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await StrategyTestHelper.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(1);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 
     [Fact]
@@ -51,21 +51,21 @@ public class RepeatLoadStrategyTests
         var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(action, context);
+        var result = strategy.GenerateLoad(action, context);
 
         var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
-        result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
+        result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.Step(action, new LoadStrategyContext(PreviousResult: result));
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await StrategyTestHelper.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(3);
-        result.NextStepDelay.Should().BeNull();
+        result.RepeatDelay.Should().BeNull();
     }
 }
