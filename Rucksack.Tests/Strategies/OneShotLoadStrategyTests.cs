@@ -11,13 +11,14 @@ public class OneShotLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new OneShotLoadStrategy(1);
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
         var result = strategy.Step(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
-        }, null);
+        }, context);
 
         await StrategyTestHelper.ExecuteStrategyResultAndWait(result);
 
@@ -32,13 +33,14 @@ public class OneShotLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new OneShotLoadStrategy(3);
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
         var result = strategy.Step(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
-        }, null);
+        }, context);
 
         await StrategyTestHelper.ExecuteStrategyResultAndWait(result);
 

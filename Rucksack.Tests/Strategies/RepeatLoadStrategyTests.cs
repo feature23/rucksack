@@ -16,9 +16,10 @@ public class RepeatLoadStrategyTests
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(action, null);
+        var result = strategy.Step(action, context);
 
         var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
@@ -26,7 +27,7 @@ public class RepeatLoadStrategyTests
         result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.Step(action, result);
+        result = strategy.Step(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await StrategyTestHelper.WhenAll(tasks);
@@ -47,9 +48,10 @@ public class RepeatLoadStrategyTests
             Interlocked.Increment(ref actionCalledCount);
             return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
+        var context = new LoadStrategyContext(PreviousResult: null);
 
         // Act
-        var result = strategy.Step(action, null);
+        var result = strategy.Step(action, context);
 
         var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
 
@@ -57,7 +59,7 @@ public class RepeatLoadStrategyTests
         result.NextStepDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.Step(action, result);
+        result = strategy.Step(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await StrategyTestHelper.WhenAll(tasks);

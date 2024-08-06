@@ -5,18 +5,18 @@ namespace Rucksack.LoadStrategies;
 public class RepeatLoadStrategy(int CountPerStep, TimeSpan Interval, TimeSpan TotalDuration)
     : ILoadStrategy
 {
-    public LoadStrategyResult Step(Func<ValueTask<LoadTaskResult>> action, LoadStrategyResult? previousResult)
+    public LoadStrategyResult Step(Func<ValueTask<LoadTaskResult>> action, LoadStrategyContext context)
     {
         RepeatLoadStrategyResult result;
         int iteration = 1;
 
-        if (previousResult is null)
+        if (context.PreviousResult is null)
         {
             result = new RepeatLoadStrategyResult(Interval, Stopwatch.StartNew(), iteration, null);
         }
-        else if (previousResult is not RepeatLoadStrategyResult previousRepeatResult)
+        else if (context.PreviousResult is not RepeatLoadStrategyResult previousRepeatResult)
         {
-            throw new ArgumentException($"Expected {nameof(RepeatLoadStrategyResult)} but got {previousResult.GetType().Name}", nameof(previousResult));
+            throw new ArgumentException($"Expected previous result type {nameof(RepeatLoadStrategyResult)} but got {context.PreviousResult.GetType().Name}", nameof(context));
         }
         else
         {

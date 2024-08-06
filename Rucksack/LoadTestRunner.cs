@@ -28,7 +28,9 @@ public static class LoadTestRunner
 
         while (true)
         {
-            result = options.LoadStrategy.Step(LoadAction, result);
+            var context = new LoadStrategyContext(PreviousResult: result);
+
+            result = options.LoadStrategy.Step(LoadAction, context);
 
             if (result.Tasks is { } tasks)
             {
