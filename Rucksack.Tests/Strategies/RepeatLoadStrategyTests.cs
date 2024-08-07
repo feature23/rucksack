@@ -16,7 +16,7 @@ public class RepeatLoadStrategyTests
             Interlocked.Increment(ref actionCalledCount);
             return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
-        var context = new LoadStrategyContext(PreviousResult: null);
+        var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
         var result = strategy.GenerateLoad(action, context);
@@ -27,7 +27,8 @@ public class RepeatLoadStrategyTests
         result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
+        var currentRunningCount = tasks.Count(t => !t.IsCompleted);
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: currentRunningCount));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await Task.WhenAll(tasks);
@@ -48,7 +49,7 @@ public class RepeatLoadStrategyTests
             Interlocked.Increment(ref actionCalledCount);
             return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
-        var context = new LoadStrategyContext(PreviousResult: null);
+        var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
         var result = strategy.GenerateLoad(action, context);
@@ -59,7 +60,8 @@ public class RepeatLoadStrategyTests
         result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
+        var currentRunningCount = tasks.Count(t => !t.IsCompleted);
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: currentRunningCount));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await Task.WhenAll(tasks);

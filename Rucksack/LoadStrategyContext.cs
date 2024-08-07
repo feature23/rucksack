@@ -1,3 +1,3 @@
 namespace Rucksack;
 
-public record LoadStrategyContext(LoadStrategyResult? PreviousResult);
+public record LoadStrategyContext(LoadStrategyResult? PreviousResult, int CurrentRunningTasks);

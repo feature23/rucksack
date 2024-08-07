@@ -28,7 +28,8 @@ public class SteppedBurstLoadStrategyTests
 
         do
         {
-            var context = new LoadStrategyContext(PreviousResult: result);
+            var currentRunningCount = tasks.Count(t => !t.IsCompleted);
+            var context = new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: currentRunningCount);
             result = strategy.GenerateLoad(action, context);
 
             if (result.Tasks is { } resultTasks)

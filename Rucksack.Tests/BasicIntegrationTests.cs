@@ -83,6 +83,62 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     }
 
     [Fact]
+    public async Task BasicConstantLoadIntegrationTest()
+    {
+        // NOTE: these tests should all finish in under a second,
+        // so we can expect this strategy to spawn 10 each second
+
+        int executionCount = 0;
+        const int count = 10;
+        const int expected = 50;
+
+        await LoadTestRunner.Run(() =>
+        {
+            Interlocked.Increment(ref executionCount);
+            return Task.CompletedTask;
+        }, new LoadTestOptions
+        {
+            LoadStrategy = new ConstantLoadStrategy(count, FromSeconds(1), FromSeconds(5)),
+            LoggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddXUnit(testOutputHelper);
+            }),
+        });
+
+        executionCount.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task BasicConstantLoadIntegrationTest_WithLongRunningTask()
+    {
+        // Only the first task will take a while to run, so we would
+        // expect it to launch in a pattern of [10, 9, 9, 9, 9] for a total of 46
+
+        int executionCount = 0;
+        const int count = 10;
+        const int expected = 46;
+
+        await LoadTestRunner.Run(async () =>
+        {
+            int value = Interlocked.Increment(ref executionCount);
+
+            if (value == 1)
+            {
+                await Task.Delay(5000);
+            }
+        }, new LoadTestOptions
+        {
+            LoadStrategy = new ConstantLoadStrategy(count, FromSeconds(1), FromSeconds(5)),
+            LoggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddXUnit(testOutputHelper);
+            }),
+        });
+
+        executionCount.Should().Be(expected);
+    }
+
+    [Fact]
     public async Task RandomDelayRepeatIntegrationTest()
     {
         int executionCount = 0;
