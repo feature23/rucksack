@@ -17,7 +17,7 @@ public class OneShotLoadStrategyTests
         var result = strategy.GenerateLoad(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
+            return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         }, context);
 
         await StrategyTestHelper.ExecuteStrategyResultAndWait(result);
@@ -39,7 +39,7 @@ public class OneShotLoadStrategyTests
         var result = strategy.GenerateLoad(() =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
+            return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         }, context);
 
         await StrategyTestHelper.ExecuteStrategyResultAndWait(result);

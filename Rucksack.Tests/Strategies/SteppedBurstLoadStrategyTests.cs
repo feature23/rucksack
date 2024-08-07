@@ -16,15 +16,15 @@ public class SteppedBurstLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new SteppedBurstLoadStrategy(step, from, to, interval: TimeSpan.FromSeconds(1));
-        var action = () =>
+        LoadTask action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
+            return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
 
         // Act
         LoadStrategyResult? result = null;
-        List<ValueTask<LoadTaskResult>> tasks = [];
+        List<Task<LoadTaskResult>> tasks = [];
 
         do
         {
@@ -33,7 +33,7 @@ public class SteppedBurstLoadStrategyTests
 
             if (result.Tasks is { } resultTasks)
             {
-                tasks.AddRange(resultTasks);
+                tasks.AddRange(resultTasks.Select(i => Task.Run(() => i())));
             }
 
             if (result.RepeatDelay.HasValue)
@@ -43,7 +43,7 @@ public class SteppedBurstLoadStrategyTests
         }
         while (result.RepeatDelay.HasValue);
 
-        await StrategyTestHelper.WhenAll(tasks);
+        await Task.WhenAll(tasks);
 
         // Assert
         result.RepeatDelay.Should().BeNull();

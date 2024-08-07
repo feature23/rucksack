@@ -11,10 +11,10 @@ public class RepeatLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new RepeatLoadStrategy(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-        var action = () =>
+        LoadTask action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
+            return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
         var context = new LoadStrategyContext(PreviousResult: null);
 
@@ -30,7 +30,7 @@ public class RepeatLoadStrategyTests
         result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
-        await StrategyTestHelper.WhenAll(tasks);
+        await Task.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(1);
@@ -43,10 +43,10 @@ public class RepeatLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new RepeatLoadStrategy(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-        var action = () =>
+        LoadTask action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
-            return ValueTask.FromResult(new LoadTaskResult(TimeSpan.Zero));
+            return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
         var context = new LoadStrategyContext(PreviousResult: null);
 
@@ -62,7 +62,7 @@ public class RepeatLoadStrategyTests
         result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
-        await StrategyTestHelper.WhenAll(tasks);
+        await Task.WhenAll(tasks);
 
         // Assert
         actionCalledCount.Should().Be(3);

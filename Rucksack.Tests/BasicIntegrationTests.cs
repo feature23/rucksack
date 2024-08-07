@@ -17,7 +17,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         await LoadTestRunner.Run(() =>
         {
             Interlocked.Increment(ref executionCount);
-            return ValueTask.CompletedTask;
+            return Task.CompletedTask;
         }, new LoadTestOptions
         {
             LoadStrategy = new OneShotLoadStrategy(count),
@@ -44,7 +44,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         await LoadTestRunner.Run(() =>
         {
             Interlocked.Increment(ref executionCount);
-            return ValueTask.CompletedTask;
+            return Task.CompletedTask;
         }, new LoadTestOptions
         {
             LoadStrategy = new RepeatLoadStrategy(count, interval, duration),
@@ -55,6 +55,31 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         });
 
         executionCount.Should().Be(count * durationSeconds / intervalSeconds);
+    }
+
+    [Fact]
+    public async Task BasicSteppedBurstIntegrationTest()
+    {
+        int executionCount = 0;
+        const int step = 10;
+        const int from = 10;
+        const int to = 50;
+        const int expected = 150; // 10 + 20 + 30 + 40 + 50
+
+        await LoadTestRunner.Run(() =>
+        {
+            Interlocked.Increment(ref executionCount);
+            return Task.CompletedTask;
+        }, new LoadTestOptions
+        {
+            LoadStrategy = new SteppedBurstLoadStrategy(step, from, to, FromSeconds(1)),
+            LoggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddXUnit(testOutputHelper);
+            }),
+        });
+
+        executionCount.Should().Be(expected);
     }
 
     [Fact]
