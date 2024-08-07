@@ -35,16 +35,16 @@ public class SteppedBurstLoadStrategy : ILoadStrategy
 
     public LoadStrategyResult GenerateLoad(LoadTask action, LoadStrategyContext context)
     {
-        SteppedLoadStrategyResult result;
+        SteppedBurstLoadStrategyResult result;
         int currentCount = _from;
 
         if (context.PreviousResult is null)
         {
-            result = new SteppedLoadStrategyResult(_interval, currentCount, null);
+            result = new SteppedBurstLoadStrategyResult(_interval, currentCount, null);
         }
-        else if (context.PreviousResult is not SteppedLoadStrategyResult previousSteppedResult)
+        else if (context.PreviousResult is not SteppedBurstLoadStrategyResult previousSteppedResult)
         {
-            throw new ArgumentException($"Expected previous result type {nameof(SteppedLoadStrategyResult)} but got {context.PreviousResult.GetType().Name}", nameof(context));
+            throw new ArgumentException($"Expected previous result type {nameof(SteppedBurstLoadStrategyResult)} but got {context.PreviousResult.GetType().Name}", nameof(context));
         }
         else
         {
@@ -66,6 +66,6 @@ public class SteppedBurstLoadStrategy : ILoadStrategy
         (from < to && currentCount >= to)
         || (from > to && currentCount <= to);
 
-    private record SteppedLoadStrategyResult(TimeSpan? RepeatDelay, int CurrentCount, IReadOnlyList<LoadTask>? Tasks)
+    private record SteppedBurstLoadStrategyResult(TimeSpan? RepeatDelay, int CurrentCount, IReadOnlyList<LoadTask>? Tasks)
         : LoadStrategyResult(RepeatDelay, Tasks);
 }

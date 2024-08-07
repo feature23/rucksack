@@ -3,15 +3,22 @@ using Rucksack.LoadStrategies;
 
 namespace Rucksack.Tests.Strategies;
 
-public class ConstantLoadStrategyTests
+public class SteppedUserLoadStrategyTests
 {
     [Fact]
-    public async Task ConstantLoadStrategy_BasicTest()
+    public async Task SteppedLoadStrategy_BasicTest()
     {
         // Arrange
-        const int expectedCount = 46;
+        const int expectedCount = 146; // [10, 19, 29, 39, 49] since the first call runs for 5 seconds
         var actionCalledCount = 0;
-        var strategy = new ConstantLoadStrategy(count: 10, checkInterval: TimeSpan.FromSeconds(1), totalDuration: TimeSpan.FromSeconds(5));
+        var strategy = new SteppedUserLoadStrategy(
+            step: 10,
+            from: 10,
+            to: 50,
+            checkInterval: TimeSpan.FromSeconds(1),
+            stepInterval: TimeSpan.FromSeconds(1),
+            totalDuration: TimeSpan.FromSeconds(5));
+
         LoadTask action = async () =>
         {
             int newCount = Interlocked.Increment(ref actionCalledCount);

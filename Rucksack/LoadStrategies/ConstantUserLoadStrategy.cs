@@ -2,20 +2,20 @@ using System.Diagnostics;
 
 namespace Rucksack.LoadStrategies;
 
-public class ConstantLoadStrategy(int count, TimeSpan checkInterval, TimeSpan totalDuration)
+public class ConstantUserLoadStrategy(int count, TimeSpan checkInterval, TimeSpan totalDuration)
     : ILoadStrategy
 {
     public LoadStrategyResult GenerateLoad(LoadTask action, LoadStrategyContext context)
     {
-        ConstantLoadStrategyResult result;
+        ConstantUserLoadStrategyResult result;
 
         if (context.PreviousResult is null)
         {
-            result = new ConstantLoadStrategyResult(checkInterval, Stopwatch.StartNew(), null);
+            result = new ConstantUserLoadStrategyResult(checkInterval, Stopwatch.StartNew(), null);
         }
-        else if (context.PreviousResult is not ConstantLoadStrategyResult previousResult)
+        else if (context.PreviousResult is not ConstantUserLoadStrategyResult previousResult)
         {
-            throw new ArgumentException($"Expected previous result type {nameof(ConstantLoadStrategyResult)} but got {context.PreviousResult.GetType().Name}", nameof(context));
+            throw new ArgumentException($"Expected previous result type {nameof(ConstantUserLoadStrategyResult)} but got {context.PreviousResult.GetType().Name}", nameof(context));
         }
         else
         {
@@ -38,6 +38,6 @@ public class ConstantLoadStrategy(int count, TimeSpan checkInterval, TimeSpan to
         };
     }
 
-    private record ConstantLoadStrategyResult(TimeSpan? RepeatDelay, Stopwatch Stopwatch, IReadOnlyList<LoadTask>? Tasks)
+    private record ConstantUserLoadStrategyResult(TimeSpan? RepeatDelay, Stopwatch Stopwatch, IReadOnlyList<LoadTask>? Tasks)
         : LoadStrategyResult(RepeatDelay, Tasks);
 }

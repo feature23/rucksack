@@ -7,16 +7,16 @@ public class RepeatLoadStrategy(int countPerInterval, TimeSpan interval, TimeSpa
 {
     public LoadStrategyResult GenerateLoad(LoadTask action, LoadStrategyContext context)
     {
-        RepeatLoadStrategyResult result;
+        RepeatBurstLoadStrategyResult result;
         int iteration = 1;
 
         if (context.PreviousResult is null)
         {
-            result = new RepeatLoadStrategyResult(interval, Stopwatch.StartNew(), iteration, null);
+            result = new RepeatBurstLoadStrategyResult(interval, Stopwatch.StartNew(), iteration, null);
         }
-        else if (context.PreviousResult is not RepeatLoadStrategyResult previousRepeatResult)
+        else if (context.PreviousResult is not RepeatBurstLoadStrategyResult previousRepeatResult)
         {
-            throw new ArgumentException($"Expected previous result type {nameof(RepeatLoadStrategyResult)} but got {context.PreviousResult.GetType().Name}", nameof(context));
+            throw new ArgumentException($"Expected previous result type {nameof(RepeatBurstLoadStrategyResult)} but got {context.PreviousResult.GetType().Name}", nameof(context));
         }
         else
         {
@@ -38,6 +38,6 @@ public class RepeatLoadStrategy(int countPerInterval, TimeSpan interval, TimeSpa
         };
     }
 
-    private record RepeatLoadStrategyResult(TimeSpan? RepeatDelay, Stopwatch Stopwatch, int Iteration, IReadOnlyList<LoadTask>? Tasks)
+    private record RepeatBurstLoadStrategyResult(TimeSpan? RepeatDelay, Stopwatch Stopwatch, int Iteration, IReadOnlyList<LoadTask>? Tasks)
         : LoadStrategyResult(RepeatDelay, Tasks);
 }
