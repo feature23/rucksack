@@ -3,14 +3,14 @@ using Rucksack.LoadStrategies;
 
 namespace Rucksack.Tests.Strategies;
 
-public class RepeatLoadStrategyTests
+public class RepeatBurstLoadStrategyTests
 {
     [Fact]
     public async Task Step_WithCountOf1_CallsActionOnce()
     {
         // Arrange
         var actionCalledCount = 0;
-        var strategy = new RepeatLoadStrategy(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+        var strategy = new RepeatBurstLoadStrategy(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         LoadTask action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
@@ -43,7 +43,7 @@ public class RepeatLoadStrategyTests
     {
         // Arrange
         var actionCalledCount = 0;
-        var strategy = new RepeatLoadStrategy(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+        var strategy = new RepeatBurstLoadStrategy(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         LoadTask action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);

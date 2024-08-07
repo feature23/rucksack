@@ -6,7 +6,7 @@ namespace Rucksack.Tests.Strategies;
 public class SteppedUserLoadStrategyTests
 {
     [Fact]
-    public async Task SteppedLoadStrategy_BasicTest()
+    public async Task SteppedUserLoadStrategy_BasicTest()
     {
         // Arrange
         const int expectedCount = 146; // [10, 19, 29, 39, 49] since the first call runs for 5 seconds

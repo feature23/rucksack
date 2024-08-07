@@ -47,7 +47,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
             return Task.CompletedTask;
         }, new LoadTestOptions
         {
-            LoadStrategy = new RepeatLoadStrategy(count, interval, duration),
+            LoadStrategy = new RepeatBurstLoadStrategy(count, interval, duration),
             LoggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddXUnit(testOutputHelper);
@@ -159,7 +159,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
             LoadStrategy = new SteppedUserLoadStrategy(step, from, to, FromSeconds(1), FromSeconds(1), FromSeconds(5)),
             LoggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddXUnit(testOutputHelper).SetMinimumLevel(LogLevel.Debug);
+                builder.AddXUnit(testOutputHelper);
             }),
         });
 
@@ -191,7 +191,37 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
             LoadStrategy = new SteppedUserLoadStrategy(step, from, to, FromSeconds(1), FromSeconds(1), FromSeconds(5)),
             LoggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddXUnit(testOutputHelper).SetMinimumLevel(LogLevel.Debug);
+                builder.AddXUnit(testOutputHelper);
+            }),
+        });
+
+        executionCount.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task BasicSequentialUserLoadIntegrationTest_OneShot()
+    {
+        int executionCount = 0;
+        const int count = 10;
+        const int expected = 50;
+
+        await LoadTestRunner.Run(() =>
+        {
+            Interlocked.Increment(ref executionCount);
+            return Task.CompletedTask;
+        }, new LoadTestOptions
+        {
+            LoadStrategy = new SequentialLoadStrategy(FromSeconds(1))
+            {
+                new OneShotLoadStrategy(count),
+                new OneShotLoadStrategy(count),
+                new OneShotLoadStrategy(count),
+                new OneShotLoadStrategy(count),
+                new OneShotLoadStrategy(count),
+            },
+            LoggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddXUnit(testOutputHelper);
             }),
         });
 
@@ -217,7 +247,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
             Interlocked.Increment(ref executionCount);
         }, new LoadTestOptions
         {
-            LoadStrategy = new RepeatLoadStrategy(count, interval, duration),
+            LoadStrategy = new RepeatBurstLoadStrategy(count, interval, duration),
             LoggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddXUnit(testOutputHelper);

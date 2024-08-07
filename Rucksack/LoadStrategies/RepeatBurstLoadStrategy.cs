@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Rucksack.LoadStrategies;
 
-public class RepeatLoadStrategy(int countPerInterval, TimeSpan interval, TimeSpan totalDuration)
+public class RepeatBurstLoadStrategy(int countPerInterval, TimeSpan interval, TimeSpan totalDuration)
     : ILoadStrategy
 {
     public LoadStrategyResult GenerateLoad(LoadTask action, LoadStrategyContext context)
