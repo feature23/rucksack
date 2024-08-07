@@ -28,7 +28,9 @@ public static class LoadTestRunner
 
         while (true)
         {
-            var context = new LoadStrategyContext(PreviousResult: result);
+            var runningCount = allTasks.Count(t => !t.IsCompleted);
+
+            var context = new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: runningCount);
 
             result = options.LoadStrategy.GenerateLoad(LoadAction, context);
 

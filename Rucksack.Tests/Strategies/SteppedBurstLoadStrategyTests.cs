@@ -23,30 +23,9 @@ public class SteppedBurstLoadStrategyTests
         };
 
         // Act
-        LoadStrategyResult? result = null;
-        List<Task<LoadTaskResult>> tasks = [];
-
-        do
-        {
-            var context = new LoadStrategyContext(PreviousResult: result);
-            result = strategy.GenerateLoad(action, context);
-
-            if (result.Tasks is { } resultTasks)
-            {
-                tasks.AddRange(resultTasks.Select(i => Task.Run(() => i())));
-            }
-
-            if (result.RepeatDelay.HasValue)
-            {
-                await Task.Delay(result.RepeatDelay.Value);
-            }
-        }
-        while (result.RepeatDelay.HasValue);
-
-        await Task.WhenAll(tasks);
+        await StrategyTestHelper.RunFullStrategyTest(strategy, action);
 
         // Assert
-        result.RepeatDelay.Should().BeNull();
         actionCalledCount.Should().Be(expectedCount);
     }
 

@@ -29,6 +29,9 @@ await LoadTestRunner.Run(async () =>
 
 There are a couple built-in strategies for generating load, or you can implement `ILoadStrategy` yourself for custom logic.
 
-* `OneShotLoadStrategy`: Enqueue the given number of tasks all at once. Does not repeat.
-* `RepeatLoadStrategy`: Repeat enqueueing the given count of tasks at each given interval until the given duration has passed.
+* `ConstantUserLoadStrategy`: Attempts to maintain a constant concurrent user load at each given check interval until the given duration has passed.
+* `OneShotBurstLoadStrategy`: Enqueue the given number of tasks all at once. Does not repeat.
+* `RepeatBurstLoadStrategy`: Repeat enqueueing the given count of tasks at each given interval until the given duration has passed.
+* `SequentialLoadStrategy`: An aggregate strategy that executes multiple load strategies in order. Great for creating scenarios like step up, then hold steady, then step down.
 * `SteppedBurstLoadStrategy`: Enqueue an increasing (or decreasing) burst of tasks in a stepwise manner, regardless of how many are still running.
+* `SteppedUserLoadStrategy`: Attempts to maintain an increasing (or decreasing) concurrent user load in a stepwise manner.

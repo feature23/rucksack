@@ -3,20 +3,20 @@ using Rucksack.LoadStrategies;
 
 namespace Rucksack.Tests.Strategies;
 
-public class RepeatLoadStrategyTests
+public class RepeatBurstLoadStrategyTests
 {
     [Fact]
     public async Task Step_WithCountOf1_CallsActionOnce()
     {
         // Arrange
         var actionCalledCount = 0;
-        var strategy = new RepeatLoadStrategy(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+        var strategy = new RepeatBurstLoadStrategy(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         LoadTask action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
-        var context = new LoadStrategyContext(PreviousResult: null);
+        var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
         var result = strategy.GenerateLoad(action, context);
@@ -27,7 +27,8 @@ public class RepeatLoadStrategyTests
         result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
+        var currentRunningCount = tasks.Count(t => !t.IsCompleted);
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: currentRunningCount));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await Task.WhenAll(tasks);
@@ -42,13 +43,13 @@ public class RepeatLoadStrategyTests
     {
         // Arrange
         var actionCalledCount = 0;
-        var strategy = new RepeatLoadStrategy(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+        var strategy = new RepeatBurstLoadStrategy(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         LoadTask action = () =>
         {
             Interlocked.Increment(ref actionCalledCount);
             return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
         };
-        var context = new LoadStrategyContext(PreviousResult: null);
+        var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
         var result = strategy.GenerateLoad(action, context);
@@ -59,7 +60,8 @@ public class RepeatLoadStrategyTests
         result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result));
+        var currentRunningCount = tasks.Count(t => !t.IsCompleted);
+        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: currentRunningCount));
 
         tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
         await Task.WhenAll(tasks);

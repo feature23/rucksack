@@ -11,7 +11,7 @@ public class OneShotLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new OneShotLoadStrategy(1);
-        var context = new LoadStrategyContext(PreviousResult: null);
+        var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
         var result = strategy.GenerateLoad(() =>
@@ -33,7 +33,7 @@ public class OneShotLoadStrategyTests
         // Arrange
         var actionCalledCount = 0;
         var strategy = new OneShotLoadStrategy(3);
-        var context = new LoadStrategyContext(PreviousResult: null);
+        var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
         var result = strategy.GenerateLoad(() =>
