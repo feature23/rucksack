@@ -12,7 +12,7 @@ using Rucksack.LoadStrategies;
 
 var options = new LoadTestOptions
 {
-    LoadStrategy = new RepeatLoadStrategy(
+    LoadStrategy = new RepeatBurstLoadStrategy(
         countPerInterval: 10,
         interval: TimeSpan.FromSeconds(1),
         totalDuration: TimeSpan.FromSeconds(10)),
