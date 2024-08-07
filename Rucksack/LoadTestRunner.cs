@@ -9,10 +9,10 @@ public static class LoadTestRunner
         Run(() =>
         {
             action();
-            return ValueTask.CompletedTask;
+            return Task.CompletedTask;
         }, options).Wait();
 
-    public static async Task Run(Func<ValueTask> action, LoadTestOptions options)
+    public static async Task Run(Func<Task> action, LoadTestOptions options)
     {
         var loggerFactory = options.LoggerFactory ?? LoggerFactory.Create(builder =>
         {
@@ -24,7 +24,7 @@ public static class LoadTestRunner
         logger.LogInformation("Rucksack is running...");
 
         LoadStrategyResult? result = null;
-        List<ValueTask<LoadTaskResult>> allTasks = [];
+        List<Task<LoadTaskResult>> allTasks = [];
 
         while (true)
         {
@@ -36,7 +36,7 @@ public static class LoadTestRunner
             {
                 logger.LogDebug("Enqueueing {Count} new tasks", tasks.Count);
 
-                allTasks.AddRange(tasks);
+                allTasks.AddRange(tasks.Select(task => Task.Run(() => task())));
             }
 
             if (result.RepeatDelay == null)
@@ -87,7 +87,7 @@ public static class LoadTestRunner
 
         return;
 
-        async ValueTask<LoadTaskResult> LoadAction()
+        async Task<LoadTaskResult> LoadAction()
         {
             var stopwatch = Stopwatch.StartNew();
 

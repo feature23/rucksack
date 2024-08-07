@@ -33,7 +33,7 @@ public class SteppedBurstLoadStrategy : ILoadStrategy
         _interval = interval;
     }
 
-    public LoadStrategyResult GenerateLoad(Func<ValueTask<LoadTaskResult>> action, LoadStrategyContext context)
+    public LoadStrategyResult GenerateLoad(LoadTask action, LoadStrategyContext context)
     {
         SteppedLoadStrategyResult result;
         int currentCount = _from;
@@ -52,9 +52,7 @@ public class SteppedBurstLoadStrategy : ILoadStrategy
             currentCount = result.CurrentCount + _step;
         }
 
-        var tasks = Enumerable.Range(0, currentCount)
-            .Select(_ => action())
-            .ToArray();
+        var tasks = Enumerable.Repeat(action, currentCount).ToArray();
 
         return result with
         {
@@ -68,6 +66,6 @@ public class SteppedBurstLoadStrategy : ILoadStrategy
         (from < to && currentCount >= to)
         || (from > to && currentCount <= to);
 
-    private record SteppedLoadStrategyResult(TimeSpan? RepeatDelay, int CurrentCount, IReadOnlyList<ValueTask<LoadTaskResult>>? Tasks)
+    private record SteppedLoadStrategyResult(TimeSpan? RepeatDelay, int CurrentCount, IReadOnlyList<LoadTask>? Tasks)
         : LoadStrategyResult(RepeatDelay, Tasks);
 }
