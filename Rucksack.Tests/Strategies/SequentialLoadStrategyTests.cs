@@ -10,13 +10,13 @@ public class SequentialLoadStrategyTests
     public async Task SequentialLoadStrategy_BasicOneShotTest()
     {
         // Arrange
-        const int expectedCount = 60; // [10, 20, 30]
+        const int expectedCount = 12; // [2, 4, 6]
         var actionCalledCount = 0;
         var strategy = new SequentialLoadStrategy(intervalBetweenStrategies: TimeSpan.FromSeconds(1))
         {
-            new OneShotLoadStrategy(count: 10),
-            new OneShotLoadStrategy(count: 20),
-            new OneShotLoadStrategy(count: 30),
+            new OneShotLoadStrategy(count: 2),
+            new OneShotLoadStrategy(count: 4),
+            new OneShotLoadStrategy(count: 6),
         };
 
         LoadTask action = () =>
@@ -36,13 +36,13 @@ public class SequentialLoadStrategyTests
     public async Task SequentialLoadStrategy_BasicSteppedBurstTest()
     {
         // Arrange
-        const int expectedCount = 450; // [10, 20, 30, 40, 50, 50, 50, 50, 50, 40, 30, 20, 10]
+        const int expectedCount = 45; // [1, 2, 3, 4, 5, 5, 5, 5, 5, 4, 3, 2, 1]
         var actionCalledCount = 0;
         var strategy = new SequentialLoadStrategy(intervalBetweenStrategies: TimeSpan.FromSeconds(1))
         {
-            new SteppedBurstLoadStrategy(step: 10, from: 10, to: 50, interval: TimeSpan.FromSeconds(1)), // [10, 20, 30, 40, 50]
-            new RepeatBurstLoadStrategy(countPerInterval: 50, interval: TimeSpan.FromSeconds(1), totalDuration: TimeSpan.FromSeconds(3)), // [50, 50, 50]
-            new SteppedBurstLoadStrategy(step: -10, from: 50, to: 10, interval: TimeSpan.FromSeconds(1)), // [50, 40, 30, 20, 10]
+            new SteppedBurstLoadStrategy(step: 1, from: 1, to: 5, interval: TimeSpan.FromSeconds(1)), // [1, 2, 3, 4, 5]
+            new RepeatBurstLoadStrategy(countPerInterval: 5, interval: TimeSpan.FromSeconds(1), totalDuration: TimeSpan.FromSeconds(3)), // [5, 5, 5]
+            new SteppedBurstLoadStrategy(step: -1, from: 5, to: 1, interval: TimeSpan.FromSeconds(1)), // [5, 4, 3, 2, 1]
         };
 
         LoadTask action = () =>
