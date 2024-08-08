@@ -5,15 +5,35 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <PackageId>Rucksack</PackageId>
+        <Version>1.0.0-alpha</Version>
+        <Title>Rucksack</Title>
+        <Authors>Paul Irwin, James Blair</Authors>
+        <Copyright>Copyright (c) feature[23] 2024</Copyright>
+        <Description>A simple load testing library for .NET.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/feature23/rucksack</PackageProjectUrl>
+        <PackageIcon>logo.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageTags>load stress test testing</PackageTags>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Rucksack.Tests" />
+        <InternalsVisibleTo Include="Rucksack.Tests"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="logo.png" Pack="true" PackagePath="\" />
+        <None Include="../README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
