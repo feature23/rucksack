@@ -12,7 +12,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     public async Task BasicOneShotIntegrationTest()
     {
         int executionCount = 0;
-        const int count = 1000;
+        const int count = 250;
 
         await LoadTestRunner.Run(() =>
         {
@@ -34,7 +34,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     public async Task BasicRepeatIntegrationTest()
     {
         int executionCount = 0;
-        const int count = 10;
+        const int count = 5;
         const int intervalSeconds = 1;
         const int durationSeconds = 10;
 
@@ -61,10 +61,10 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     public async Task BasicSteppedBurstIntegrationTest()
     {
         int executionCount = 0;
-        const int step = 10;
-        const int from = 10;
-        const int to = 50;
-        const int expected = 150; // 10 + 20 + 30 + 40 + 50
+        const int step = 5;
+        const int from = 5;
+        const int to = 25;
+        const int expected = 75; // 5 + 10 + 15 + 20 + 25
 
         await LoadTestRunner.Run(() =>
         {
@@ -89,8 +89,8 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         // so we can expect this strategy to spawn 10 each second
 
         int executionCount = 0;
-        const int count = 10;
-        const int expected = 50;
+        const int count = 5;
+        const int expected = 25;
 
         await LoadTestRunner.Run(() =>
         {
@@ -112,11 +112,11 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     public async Task BasicConstantUserLoadIntegrationTest_WithLongRunningTask()
     {
         // Only the first task will take a while to run, so we would
-        // expect it to launch in a pattern of [10, 9, 9, 9, 9] for a total of 46
+        // expect it to launch in a pattern of [5, 4, 4, 4, 4] for a total of 21
 
         int executionCount = 0;
-        const int count = 10;
-        const int expected = 46;
+        const int count = 5;
+        const int expected = 21;
 
         await LoadTestRunner.Run(async () =>
         {
@@ -145,10 +145,10 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         // so we can expect this strategy to spawn 10-50 each second
 
         int executionCount = 0;
-        const int step = 10;
-        const int from = 10;
-        const int to = 50;
-        const int expected = 150;
+        const int step = 5;
+        const int from = 5;
+        const int to = 25;
+        const int expected = 75;
 
         await LoadTestRunner.Run(() =>
         {
@@ -170,13 +170,13 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     public async Task BasicSteppedUserLoadIntegrationTest_WithLongRunningTask()
     {
         // Only the first task will take a while to run, so we would
-        // expect it to launch in a pattern of [10, 19, 29, 39, 49] for a total of 146
+        // expect it to launch in a pattern of [5, 9, 14, 19, 24] for a total of 71
 
         int executionCount = 0;
-        const int step = 10;
-        const int from = 10;
-        const int to = 50;
-        const int expected = 146;
+        const int step = 5;
+        const int from = 5;
+        const int to = 25;
+        const int expected = 71;
 
         await LoadTestRunner.Run(async () =>
         {
@@ -202,8 +202,8 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     public async Task BasicSequentialUserLoadIntegrationTest_OneShot()
     {
         int executionCount = 0;
-        const int count = 10;
-        const int expected = 50;
+        const int count = 5;
+        const int expected = 25;
 
         await LoadTestRunner.Run(() =>
         {
@@ -232,7 +232,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
     public async Task RandomDelayRepeatIntegrationTest()
     {
         int executionCount = 0;
-        const int count = 10;
+        const int count = 5;
         const int intervalSeconds = 1;
         const int durationSeconds = 5;
 

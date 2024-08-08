@@ -3,6 +3,7 @@ using Rucksack.LoadStrategies;
 
 namespace Rucksack.Tests.Strategies;
 
+[Collection(TestCollections.StrategyTests)]
 public class SequentialLoadStrategyTests
 {
     [Fact]
