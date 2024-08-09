@@ -3,6 +3,7 @@ using Rucksack.LoadStrategies;
 
 namespace Rucksack.Tests.Strategies;
 
+[Collection(TestCollections.StrategyTests)]
 public class SteppedBurstLoadStrategyTests
 {
     [InlineData(1, 1, 2, 3)] // generated load = [1, 2] for a total of 3

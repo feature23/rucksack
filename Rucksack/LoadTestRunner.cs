@@ -48,7 +48,8 @@ public static class LoadTestRunner
                         {
                             var taskResult = await task();
                             progressTask.Increment(1);
-                            progressTask.Description = $"[green]Running Tasks ({progressTask.Value}/{progressTask.MaxValue})[/]";
+                            progressTask.Description =
+                                $"[green]Running Tasks ({progressTask.Value}/{progressTask.MaxValue})[/]";
                             return taskResult;
                         })));
                         progressTask.MaxValue += tasks.Count;
@@ -59,7 +60,11 @@ public static class LoadTestRunner
                         break;
                     }
 
-                    await Task.Delay(result.RepeatDelay.Value);
+                    // NOTE: using Thread.Sleep instead of Task.Delay to avoid changing
+                    // threads/processors due to possible HAL bugs with getting accurate
+                    // data in a multithreaded environment for strategy Stopwatch use.
+                    // See: https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch?view=net-8.0#remarks
+                    Thread.Sleep(result.RepeatDelay.Value);
                 }
 
                 logger?.LogInformation("Waiting for {Count} tasks to complete...", allTasks.Count);
@@ -73,7 +78,8 @@ public static class LoadTestRunner
         var successCount = results.Count(r => r.IsSuccess);
         var totalCount = results.Count;
         var passRate = successCount / (double)totalCount;
-        logger?.LogInformation("Passed: {SuccessCount}/{TotalCount} ({PassRate:P1})", successCount, totalCount, passRate);
+        logger?.LogInformation("Passed: {SuccessCount}/{TotalCount} ({PassRate:P1})", successCount, totalCount,
+            passRate);
         AnsiConsole.MarkupLineInterpolated($"[green]Passed: {successCount}/{totalCount} ({passRate:P1})[/]");
 
         if (successCount != totalCount)
