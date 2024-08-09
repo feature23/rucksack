@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rucksack", "Rucksack\Rucksa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rucksack.Tests", "Rucksack.Tests\Rucksack.Tests.csproj", "{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rucksack.ConsoleExample", "Rucksack.ConsoleExample\Rucksack.ConsoleExample.csproj", "{662F7ACE-7319-42FA-A737-9004F331337E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAFD1A96-C7A4-44AD-ACFA-BAF42A02035E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{662F7ACE-7319-42FA-A737-9004F331337E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{662F7ACE-7319-42FA-A737-9004F331337E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{662F7ACE-7319-42FA-A737-9004F331337E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{662F7ACE-7319-42FA-A737-9004F331337E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
