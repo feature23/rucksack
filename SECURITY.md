@@ -10,4 +10,4 @@
 
 Please file a GitHub issue for any security vulnerabilities.
 
-If you wish to report the vulnerability privately, you can email us at security at feature23.com.
+If you wish to report the vulnerability privately, you can do so under the Security tab of this GitHub project.

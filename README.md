@@ -1,5 +1,7 @@
 # Rucksack
 
+[![CI Build](https://github.com/feature23/rucksack/actions/workflows/dotnet.yml/badge.svg)](https://github.com/feature23/rucksack/actions/workflows/dotnet.yml)
+
 A simple load testing library for .NET.
 
 ## Getting Started
