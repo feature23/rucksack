@@ -4,6 +4,8 @@ namespace Rucksack.Tests.Strategies;
 
 public static class StrategyTestHelper
 {
+    public static readonly LoadTask NullTask = () => Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
+
     public static async Task RunFullStrategyTest(ILoadStrategy strategy, LoadTask action)
     {
         LoadStrategyResult? result = null;
@@ -22,7 +24,11 @@ public static class StrategyTestHelper
 
             if (result.RepeatDelay.HasValue)
             {
-                await Task.Delay(result.RepeatDelay.Value);
+                // NOTE: using Thread.Sleep instead of Task.Delay to avoid changing
+                // threads/processors due to possible HAL bugs with getting accurate
+                // data in a multithreaded environment for strategy Stopwatch use.
+                // See: https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch?view=net-8.0#remarks
+                Thread.Sleep(result.RepeatDelay.Value);
             }
         }
         while (result.RepeatDelay.HasValue);
@@ -32,22 +38,17 @@ public static class StrategyTestHelper
         result.RepeatDelay.Should().BeNull();
     }
 
-    public static async Task ExecuteStrategyResultAndWait(LoadStrategyResult result)
+    public static int ExecuteStrategyResult(LoadStrategyResult result)
     {
-        var tasks = await ExecuteStrategyResult(result);
-
-        await Task.WhenAll(tasks);
-    }
-
-    public static async Task<List<Task<LoadTaskResult>>> ExecuteStrategyResult(LoadStrategyResult result)
-    {
-        var tasks = result.Tasks?.Select(i => Task.Run(() => i())).ToList() ?? [];
-
         if (result.RepeatDelay.HasValue)
         {
-            await Task.Delay(result.RepeatDelay.Value);
+            // NOTE: using Thread.Sleep instead of Task.Delay to avoid changing
+            // threads/processors due to possible HAL bugs with getting accurate
+            // data in a multithreaded environment for strategy Stopwatch use.
+            // See: https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch?view=net-8.0#remarks
+            Thread.Sleep(result.RepeatDelay.Value);
         }
 
-        return tasks;
+        return result.Tasks?.Count ?? 0;
     }
 }

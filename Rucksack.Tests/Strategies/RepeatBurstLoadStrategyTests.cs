@@ -3,71 +3,59 @@ using Rucksack.LoadStrategies;
 
 namespace Rucksack.Tests.Strategies;
 
+[Collection(TestCollections.StrategyTests)]
 public class RepeatBurstLoadStrategyTests
 {
     [Fact]
-    public async Task Step_WithCountOf1_CallsActionOnce()
+    public void Step_WithCountOf1_CallsActionOnce()
     {
         // Arrange
-        var actionCalledCount = 0;
         var strategy = new RepeatBurstLoadStrategy(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-        LoadTask action = () =>
-        {
-            Interlocked.Increment(ref actionCalledCount);
-            return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
-        };
         var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
-        var result = strategy.GenerateLoad(action, context);
+        var result = strategy.GenerateLoad(StrategyTestHelper.NullTask, context);
 
-        var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
+        var taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
-        result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
+        taskCount.Should().Be(1);
 
         // Call again
-        var currentRunningCount = tasks.Count(t => !t.IsCompleted);
-        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: currentRunningCount));
+        result = strategy.GenerateLoad(StrategyTestHelper.NullTask,
+            new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: 0));
 
-        tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
-        await Task.WhenAll(tasks);
+        taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
-        actionCalledCount.Should().Be(1);
+        taskCount.Should().Be(0);
         result.RepeatDelay.Should().BeNull();
     }
 
     [Fact]
-    public async Task Step_WithCountOf3_CallsActionThreeTimes()
+    public void Step_WithCountOf3_CallsActionThreeTimes()
     {
         // Arrange
-        var actionCalledCount = 0;
         var strategy = new RepeatBurstLoadStrategy(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-        LoadTask action = () =>
-        {
-            Interlocked.Increment(ref actionCalledCount);
-            return Task.FromResult(new LoadTaskResult(TimeSpan.Zero));
-        };
         var context = new LoadStrategyContext(PreviousResult: null, CurrentRunningTasks: 0);
 
         // Act
-        var result = strategy.GenerateLoad(action, context);
+        var result = strategy.GenerateLoad(StrategyTestHelper.NullTask, context);
 
-        var tasks = await StrategyTestHelper.ExecuteStrategyResult(result);
+        var taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
+        taskCount.Should().Be(3);
         result.RepeatDelay.Should().Be(TimeSpan.FromSeconds(1));
 
         // Call again
-        var currentRunningCount = tasks.Count(t => !t.IsCompleted);
-        result = strategy.GenerateLoad(action, new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: currentRunningCount));
+        result = strategy.GenerateLoad(StrategyTestHelper.NullTask,
+            new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: 0));
 
-        tasks.AddRange(await StrategyTestHelper.ExecuteStrategyResult(result));
-        await Task.WhenAll(tasks);
+        taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
-        actionCalledCount.Should().Be(3);
+        taskCount.Should().Be(0);
         result.RepeatDelay.Should().BeNull();
     }
 }
