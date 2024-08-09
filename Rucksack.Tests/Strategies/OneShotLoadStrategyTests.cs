@@ -7,7 +7,7 @@ namespace Rucksack.Tests.Strategies;
 public class OneShotLoadStrategyTests
 {
     [Fact]
-    public async Task Step_WithCountOf1_CallsActionOnce()
+    public void Step_WithCountOf1_CallsActionOnce()
     {
         // Arrange
         var strategy = new OneShotLoadStrategy(1);
@@ -16,7 +16,7 @@ public class OneShotLoadStrategyTests
         // Act
         var result = strategy.GenerateLoad(StrategyTestHelper.NullTask, context);
 
-        int count = await StrategyTestHelper.ExecuteStrategyResult(result);
+        int count = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         count.Should().Be(1);
@@ -24,7 +24,7 @@ public class OneShotLoadStrategyTests
     }
 
     [Fact]
-    public async Task Step_WithCountOf3_CallsActionThreeTimes()
+    public void Step_WithCountOf3_CallsActionThreeTimes()
     {
         // Arrange
         var strategy = new OneShotLoadStrategy(3);
@@ -33,7 +33,7 @@ public class OneShotLoadStrategyTests
         // Act
         var result = strategy.GenerateLoad(StrategyTestHelper.NullTask, context);
 
-        int count = await StrategyTestHelper.ExecuteStrategyResult(result);
+        int count = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         count.Should().Be(3);

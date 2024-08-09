@@ -7,7 +7,7 @@ namespace Rucksack.Tests.Strategies;
 public class RepeatBurstLoadStrategyTests
 {
     [Fact]
-    public async Task Step_WithCountOf1_CallsActionOnce()
+    public void Step_WithCountOf1_CallsActionOnce()
     {
         // Arrange
         var strategy = new RepeatBurstLoadStrategy(1, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
@@ -16,7 +16,7 @@ public class RepeatBurstLoadStrategyTests
         // Act
         var result = strategy.GenerateLoad(StrategyTestHelper.NullTask, context);
 
-        var taskCount = await StrategyTestHelper.ExecuteStrategyResult(result);
+        var taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         taskCount.Should().Be(1);
@@ -25,7 +25,7 @@ public class RepeatBurstLoadStrategyTests
         result = strategy.GenerateLoad(StrategyTestHelper.NullTask,
             new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: 0));
 
-        taskCount = await StrategyTestHelper.ExecuteStrategyResult(result);
+        taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         taskCount.Should().Be(0);
@@ -33,7 +33,7 @@ public class RepeatBurstLoadStrategyTests
     }
 
     [Fact]
-    public async Task Step_WithCountOf3_CallsActionThreeTimes()
+    public void Step_WithCountOf3_CallsActionThreeTimes()
     {
         // Arrange
         var strategy = new RepeatBurstLoadStrategy(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
@@ -42,7 +42,7 @@ public class RepeatBurstLoadStrategyTests
         // Act
         var result = strategy.GenerateLoad(StrategyTestHelper.NullTask, context);
 
-        var taskCount = await StrategyTestHelper.ExecuteStrategyResult(result);
+        var taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         taskCount.Should().Be(3);
@@ -52,7 +52,7 @@ public class RepeatBurstLoadStrategyTests
         result = strategy.GenerateLoad(StrategyTestHelper.NullTask,
             new LoadStrategyContext(PreviousResult: result, CurrentRunningTasks: 0));
 
-        taskCount = await StrategyTestHelper.ExecuteStrategyResult(result);
+        taskCount = StrategyTestHelper.ExecuteStrategyResult(result);
 
         // Assert
         taskCount.Should().Be(0);
