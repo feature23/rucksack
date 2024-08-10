@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Rucksack.LoadStrategies;
+using Rucksack.Tests.Util;
 using Xunit.Abstractions;
 using static System.TimeSpan;
 
@@ -18,14 +19,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         {
             Interlocked.Increment(ref executionCount);
             return Task.CompletedTask;
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new OneShotLoadStrategy(count),
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+        }, LoadTestOptionsFactory.Create(new OneShotLoadStrategy(count), testOutputHelper));
 
         executionCount.Should().Be(count);
     }
@@ -45,14 +39,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         {
             Interlocked.Increment(ref executionCount);
             return Task.CompletedTask;
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new RepeatBurstLoadStrategy(count, interval, duration),
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+        }, LoadTestOptionsFactory.Create(new RepeatBurstLoadStrategy(count, interval, duration), testOutputHelper));
 
         executionCount.Should().Be(count * durationSeconds / intervalSeconds);
     }
@@ -67,17 +54,12 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         const int expected = 75; // 5 + 10 + 15 + 20 + 25
 
         await LoadTestRunner.Run(() =>
-        {
-            Interlocked.Increment(ref executionCount);
-            return Task.CompletedTask;
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new SteppedBurstLoadStrategy(step, from, to, FromSeconds(1)),
-            LoggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+                Interlocked.Increment(ref executionCount);
+                return Task.CompletedTask;
+            },
+            LoadTestOptionsFactory.Create(new SteppedBurstLoadStrategy(step, from, to, FromSeconds(1)),
+                testOutputHelper));
 
         executionCount.Should().Be(expected);
     }
@@ -93,17 +75,12 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         const int expected = 25;
 
         await LoadTestRunner.Run(() =>
-        {
-            Interlocked.Increment(ref executionCount);
-            return Task.CompletedTask;
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new ConstantUserLoadStrategy(count, FromSeconds(1), FromSeconds(5)),
-            LoggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+                Interlocked.Increment(ref executionCount);
+                return Task.CompletedTask;
+            },
+            LoadTestOptionsFactory.Create(new ConstantUserLoadStrategy(count, FromSeconds(1), FromSeconds(5)),
+                testOutputHelper));
 
         executionCount.Should().Be(expected);
     }
@@ -119,21 +96,16 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         const int expected = 21;
 
         await LoadTestRunner.Run(async () =>
-        {
-            int value = Interlocked.Increment(ref executionCount);
+            {
+                int value = Interlocked.Increment(ref executionCount);
 
-            if (value == 1)
-            {
-                await Task.Delay(5000);
-            }
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new ConstantUserLoadStrategy(count, FromSeconds(1), FromSeconds(5)),
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+                if (value == 1)
+                {
+                    await Task.Delay(5000);
+                }
+            },
+            LoadTestOptionsFactory.Create(new ConstantUserLoadStrategy(count, FromSeconds(1), FromSeconds(5)),
+                testOutputHelper));
 
         executionCount.Should().Be(expected);
     }
@@ -151,17 +123,13 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         const int expected = 75;
 
         await LoadTestRunner.Run(() =>
-        {
-            Interlocked.Increment(ref executionCount);
-            return Task.CompletedTask;
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new SteppedUserLoadStrategy(step, from, to, FromSeconds(1), FromSeconds(1), FromSeconds(5)),
-            LoggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+                Interlocked.Increment(ref executionCount);
+                return Task.CompletedTask;
+            },
+            LoadTestOptionsFactory.Create(
+                new SteppedUserLoadStrategy(step, from, to, FromSeconds(1), FromSeconds(1), FromSeconds(5)),
+                testOutputHelper));
 
         executionCount.Should().Be(expected);
     }
@@ -179,21 +147,17 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         const int expected = 71;
 
         await LoadTestRunner.Run(async () =>
-        {
-            int value = Interlocked.Increment(ref executionCount);
+            {
+                int value = Interlocked.Increment(ref executionCount);
 
-            if (value == 1)
-            {
-                await Task.Delay(5000);
-            }
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new SteppedUserLoadStrategy(step, from, to, FromSeconds(1), FromSeconds(1), FromSeconds(5)),
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+                if (value == 1)
+                {
+                    await Task.Delay(5000);
+                }
+            },
+            LoadTestOptionsFactory.Create(
+                new SteppedUserLoadStrategy(step, from, to, FromSeconds(1), FromSeconds(1), FromSeconds(5)),
+                testOutputHelper));
 
         executionCount.Should().Be(expected);
     }
@@ -209,21 +173,14 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
         {
             Interlocked.Increment(ref executionCount);
             return Task.CompletedTask;
-        }, new LoadTestOptions
+        }, LoadTestOptionsFactory.Create(new SequentialLoadStrategy(FromSeconds(1))
         {
-            LoadStrategy = new SequentialLoadStrategy(FromSeconds(1))
-            {
-                new OneShotLoadStrategy(count),
-                new OneShotLoadStrategy(count),
-                new OneShotLoadStrategy(count),
-                new OneShotLoadStrategy(count),
-                new OneShotLoadStrategy(count),
-            },
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+            new OneShotLoadStrategy(count),
+            new OneShotLoadStrategy(count),
+            new OneShotLoadStrategy(count),
+            new OneShotLoadStrategy(count),
+            new OneShotLoadStrategy(count),
+        }, testOutputHelper));
 
         executionCount.Should().Be(expected);
     }
@@ -245,14 +202,7 @@ public class BasicIntegrationTests(ITestOutputHelper testOutputHelper)
             var delay = random.Next(1000, 5000);
             await Task.Delay(delay);
             Interlocked.Increment(ref executionCount);
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new RepeatBurstLoadStrategy(count, interval, duration),
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+        }, LoadTestOptionsFactory.Create(new RepeatBurstLoadStrategy(count, interval, duration), testOutputHelper));
 
         executionCount.Should().Be(count * durationSeconds / intervalSeconds);
     }

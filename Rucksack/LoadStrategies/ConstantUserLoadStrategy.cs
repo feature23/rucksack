@@ -34,7 +34,7 @@ public class ConstantUserLoadStrategy(int count, TimeSpan checkInterval, TimeSpa
         return result with
         {
             RepeatDelay = checkInterval,
-            Tasks = tasks,
+            Tasks = tasks
         };
     }
 
