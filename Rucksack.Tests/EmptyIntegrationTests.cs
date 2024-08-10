@@ -1,6 +1,8 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Rucksack.LoadStrategies;
+using Rucksack.Tests.Util;
+using Spectre.Console;
 using Xunit.Abstractions;
 
 namespace Rucksack.Tests;
@@ -15,14 +17,7 @@ public class EmptyIntegrationTests(ITestOutputHelper testOutputHelper)
         LoadTestRunner.Run(() =>
         {
             executed = true;
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new OneShotLoadStrategy(1),
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+        }, LoadTestOptionsFactory.Create(new OneShotLoadStrategy(1), testOutputHelper));
 
         executed.Should().BeTrue();
     }
@@ -36,14 +31,7 @@ public class EmptyIntegrationTests(ITestOutputHelper testOutputHelper)
         {
             await Task.Delay(100);
             executed = true;
-        }, new LoadTestOptions
-        {
-            LoadStrategy = new OneShotLoadStrategy(1),
-            LoggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddXUnit(testOutputHelper);
-            }),
-        });
+        }, LoadTestOptionsFactory.Create(new OneShotLoadStrategy(1), testOutputHelper));
 
         executed.Should().BeTrue();
     }

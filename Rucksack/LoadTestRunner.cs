@@ -16,18 +16,19 @@ public static class LoadTestRunner
     public static async Task Run(Func<Task> action, LoadTestOptions options)
     {
         var logger = options.LoggerFactory?.CreateLogger(nameof(LoadTestRunner));
+        var ansiConsole = options.Console;
 
         logger?.LogInformation("Rucksack is running...");
-        AnsiConsole.Write(new FigletText("Rucksack")
+        ansiConsole.Write(new FigletText("Rucksack")
             .Color(Color.Green));
-        AnsiConsole.WriteLine("Starting load test...");
+        ansiConsole.WriteLine("Starting load test...");
 
         LoadStrategyResult? result = null;
         List<Task<LoadTaskResult>> allTasks = [];
 
         List<LoadTaskResult> results = new(allTasks.Count);
 
-        await AnsiConsole.Progress()
+        await ansiConsole.Progress()
             .StartAsync(async (ctx) =>
             {
                 var progressTask = ctx.AddTask("[green]Running Tasks...[/]", maxValue: allTasks.Count);
@@ -80,7 +81,7 @@ public static class LoadTestRunner
         var passRate = successCount / (double)totalCount;
         logger?.LogInformation("Passed: {SuccessCount}/{TotalCount} ({PassRate:P1})", successCount, totalCount,
             passRate);
-        AnsiConsole.MarkupLineInterpolated($"[green]Passed: {successCount}/{totalCount} ({passRate:P1})[/]");
+        ansiConsole.MarkupLineInterpolated($"[green]Passed: {successCount}/{totalCount} ({passRate:P1})[/]");
 
         if (successCount != totalCount)
         {
@@ -103,7 +104,7 @@ public static class LoadTestRunner
                     new Markup(count.ToString(), new Style(foreground: Color.Red)));
             }
 
-            AnsiConsole.Write(table);
+            ansiConsole.Write(table);
         }
 
         var avgDuration = TimeSpan.FromMilliseconds(results
@@ -111,10 +112,10 @@ public static class LoadTestRunner
             .Average());
 
         logger?.LogInformation("Average duration: {AvgDuration}", avgDuration);
-        AnsiConsole.MarkupLineInterpolated($"[green]Average duration: {avgDuration}[/]");
+        ansiConsole.MarkupLineInterpolated($"[green]Average duration: {avgDuration}[/]");
 
         logger?.LogInformation("Rucksack has finished");
-        AnsiConsole.MarkupLine("Rucksack has finished");
+        ansiConsole.MarkupLine("Rucksack has finished");
 
         return;
 
