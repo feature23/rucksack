@@ -1,13 +1,19 @@
 # Rucksack
 
 [![CI Build](https://github.com/feature23/rucksack/actions/workflows/dotnet.yml/badge.svg)](https://github.com/feature23/rucksack/actions/workflows/dotnet.yml)
+[![NuGet](https://img.shields.io/nuget/vpre/Rucksack)](https://www.nuget.org/packages/Rucksack)
 
 A simple load testing library for .NET.
 
 ## Getting Started
 
-Currently, you must build the project from source and add as a reference manually. A NuGet release will come soon.
+Add Rucksack as a dependency via [NuGet](https://www.nuget.org/packages/Rucksack):
 
+```bash
+dotnet add package Rucksack --prerelease
+```
+
+Define your options with your preferred strategy, and call `Run`:
 ```c#
 using Rucksack;
 using Rucksack.LoadStrategies;
